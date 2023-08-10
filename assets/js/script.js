@@ -1,18 +1,32 @@
 var searchBtn = document.getElementById('searchBtn');
 var searchCity = document.getElementById('cityName');
+var searchCard = document.getElementById('searchCard');
 var searchHistoryCard = document.getElementById('searchHistoryCard');
 var cityWeatherCard = document.getElementById('cityWeatherCard');
 
 var openWeatherAPI = "5a53411e129f903ae31c1c2a4945c078";
-// var stringSample = "London";
 var citySearchList = [];
 
 function setHistory() {
     citySearchList.push(searchCity.value);
+    searchHistoryCard.textContent = "";
 
-    for (var i = 0; i < citySearchList.length; i++) {
-        var btnEl = $('button');
-        btnEl.attr('button', (i + 1));
+    for (var i = citySearchList.length - 1; i > -1; i--) {
+        var cityBtnEl = document.createElement('button');
+        cityBtnEl.setAttribute('id', `button${i}`);
+        cityBtnEl.setAttribute('class', 'cityBtns');
+        cityBtnEl.textContent = citySearchList[i];
+        searchHistoryCard.append(cityBtnEl);
+    }
+
+    if(citySearchList.length !== 0) {
+        var clearBtnEl = document.createElement('button');
+        var saveBtnEl = document.createElement('button');
+        clearBtnEl.setAttribute('id', 'clearBtn');
+        saveBtnEl.setAttribute('id', 'saveBtn');
+        clearBtnEl.textContent = 'Clear History';
+        saveBtnEl.textContent = 'Save History';
+        searchCard.append(cityBtnEl, saveBtnEl);
     }
 }
 
@@ -46,4 +60,4 @@ function getCurrentWeather(lat, lon) {
 }
 
 searchBtn.addEventListener('click', setHistory);
-searchBtn.addEventListener('click', getGeoCoords);
+// searchBtn.addEventListener('click', getGeoCoords);
