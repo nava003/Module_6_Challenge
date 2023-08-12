@@ -8,33 +8,60 @@ var dailyWeatherCard = document.getElementById('dailyWeatherCard');
 var openWeatherAPI = "5a53411e129f903ae31c1c2a4945c078";
 var citySearchList = [];
 
-function setHistory() {
-    citySearchList.push(searchCity.value);
-    searchHistoryCard.textContent = "";
-    searchCard.textContent = "";
+function verifyInput() {
+    var strCityName = searchCity.value;
 
-    for (var i = citySearchList.length - 1; i > -1; i--) {
+    // With the given RegEx, if the input carries a non-aplhabetic character, display the error with no further continuation
+    var regSpecExp = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    var regIntExp = /\d+/g;
+    if (regSpecExp.test(strCityName) || regIntExp.test(strCityName)) {
+        alert(`Error: Invalid search.`);
+        return;
+    }
+
+    // So long as the array isn't empty, check to see if a city name was already searched
+    if (citySearchList.length !== 0) {
+        for (var i = 0; i < citySearchList.length; i++) {
+            if (strCityName == citySearchList[i]) {
+                alert(`Error: ${strCityName} was already searched.`);
+                return;
+            }
+        }
+    }
+
+    // If no errors were thrown, proceed to the next function
+    setHistory(strCityName);
+}
+
+function setHistory(cityName) {
+    citySearchList.push(cityName);
+    searchHistoryCard.textContent = "";
+
+    for (var n = citySearchList.length - 1; n > -1; n--) {
         var cityBtnEl = document.createElement('button');
-        cityBtnEl.setAttribute('id', `button${i}`);
+        cityBtnEl.setAttribute('id', `button${n}`);
         cityBtnEl.setAttribute('class', 'cityBtns');
-        cityBtnEl.textContent = citySearchList[i];
+        cityBtnEl.textContent = citySearchList[n];
         searchHistoryCard.append(cityBtnEl);
     }
 
-    var clearBtnEl = document.createElement('button');
-    var saveBtnEl = document.createElement('button');
-    clearBtnEl.setAttribute('id', 'clearBtn');
-    saveBtnEl.setAttribute('id', 'saveBtn');
-    clearBtnEl.textContent = 'Clear History';
-    saveBtnEl.textContent = 'Save History';
-    searchCard.append(clearBtnEl);
-    searchCard.append(saveBtnEl);
+    if (!document.getElementById('clearBtn') && !document.getElementById('saveBtn')) {
+        var clearBtnEl = document.createElement('button');
+        var saveBtnEl = document.createElement('button');
+        clearBtnEl.setAttribute('id', 'clearBtn');
+        saveBtnEl.setAttribute('id', 'saveBtn');
+        clearBtnEl.textContent = 'Clear History';
+        saveBtnEl.textContent = 'Save History';
+        searchCard.append(clearBtnEl);
+        searchCard.append(saveBtnEl);
+    }
+
 }
 
-function getGeoCoords() {
+function getGeoCoords(city) {
     var openWeatherGeoURL = "https://api.openweathermap.org/geo/1.0/direct";
 
-    fetch(`${openWeatherGeoURL}?q=${searchCity.value}&appid=${openWeatherAPI}`)
+    fetch(`${openWeatherGeoURL}?q=${city}&appid=${openWeatherAPI}`)
         .then(function (response) {
             return response.json();
         })
@@ -95,5 +122,4 @@ function displayDailyWeather(dat) {
     console.log(dat);
 }
 
-searchBtn.addEventListener('click', setHistory);
-searchBtn.addEventListener('click', getGeoCoords);
+searchBtn.addEventListener('click', verifyInput);
