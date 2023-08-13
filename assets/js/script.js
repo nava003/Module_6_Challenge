@@ -15,7 +15,7 @@ function verifyInput() {
     var regSpecExp = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
     var regIntExp = /\d+/g;
     if (regSpecExp.test(strCityName) || regIntExp.test(strCityName)) {
-        alert(`Error: Invalid search.`);
+        alert(`Error: Invalid characters found. Try again.`);
         return;
     }
 
@@ -30,11 +30,34 @@ function verifyInput() {
     }
 
     // If no errors were thrown, proceed to the next function
-    setHistory(strCityName);
+    getGeoCoords(strCityName);
 }
 
-function setHistory(cityName) {
-    citySearchList.push(cityName);
+function getGeoCoords(cityName) {
+    var openWeatherGeoURL = "https://api.openweathermap.org/geo/1.0/direct";
+
+    fetch(`${openWeatherGeoURL}?q=${cityName}&appid=${openWeatherAPI}`)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            // This is acting as the final validation check; to see whether or not the API has given a data response
+            if(data.length !== 0) {
+                var dataLat = data[0].lat;
+                var dataLong = data[0].lon;
+                setHistory(cityName);
+                getCurrentWeather(dataLat, dataLong);
+                getDailyWeather(dataLat, dataLong);
+            } else {
+                // Throw an error message before exiting the function
+                alert('Error: Invalid Entry. Try again.');
+                return;
+            }
+        });
+}
+
+function setHistory(city) {
+    citySearchList.push(city);
     searchHistoryCard.textContent = "";
 
     for (var n = citySearchList.length - 1; n > -1; n--) {
@@ -55,22 +78,6 @@ function setHistory(cityName) {
         searchCard.append(clearBtnEl);
         searchCard.append(saveBtnEl);
     }
-
-}
-
-function getGeoCoords(city) {
-    var openWeatherGeoURL = "https://api.openweathermap.org/geo/1.0/direct";
-
-    fetch(`${openWeatherGeoURL}?q=${city}&appid=${openWeatherAPI}`)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            var dataLat = data[0].lat;
-            var dataLong = data[0].lon;
-            getCurrentWeather(dataLat, dataLong);
-            getDailyWeather(dataLat, dataLong);
-        });
 }
 
 function getCurrentWeather(lat, lon) {
