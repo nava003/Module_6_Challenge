@@ -3,7 +3,7 @@ var searchCity = document.getElementById('searchCity');
 var searchCard = document.getElementById('searchCard');
 var searchHistoryCard = document.getElementById('searchHistoryCard');
 var currentWeatherCard = document.getElementById('currentWeatherCard');
-var dailyWeatherCard = document.getElementById('dailyWeatherCard');
+var forecastCard = document.getElementById('forecastCard');
 
 var openWeatherAPI = "5a53411e129f903ae31c1c2a4945c078";
 var citySearchList = [];
@@ -42,12 +42,12 @@ function getGeoCoords(cityName) {
         })
         .then(function (data) {
             // This is acting as the final validation check; to see whether or not the API has given a data response
-            if(data.length !== 0) {
+            if (data.length !== 0) {
                 var dataLat = data[0].lat;
                 var dataLong = data[0].lon;
                 setHistory(cityName);
                 getCurrentWeather(dataLat, dataLong);
-                getDailyWeather(dataLat, dataLong);
+                getForecastWeather(dataLat, dataLong);
             } else {
                 // Throw an error message before exiting the function
                 alert('Error: Invalid Entry. Try again.');
@@ -94,6 +94,8 @@ function getCurrentWeather(lat, lon) {
 
 function displayCurrentWeather(dat) {
     currentWeatherCard.textContent = "";
+    var iconWeatherIMG = dat.weather[0].icon;
+    var iconSRC = `https://openweathermap.org/img/wn/${iconWeatherIMG}.png`;
 
     var cityName = dat.name;
     var timeStamp = new Date(dat.dt * 1000); // Convert UNIX to Date format
@@ -101,9 +103,12 @@ function displayCurrentWeather(dat) {
     var tsMonth = (timeStamp.getMonth() + 1); // getMonth indexes Jan-Dec as 0-11; +1 gives the actual month number
     var tsYear = timeStamp.getFullYear();
 
-    var headTwoEl = document.createElement('h2');
-    headTwoEl.textContent = `${cityName} (${tsMonth}/${tsDay}/${tsYear})`;
-    currentWeatherCard.append(headTwoEl);
+    var cityHeadEl = document.createElement('h2');
+    cityHeadEl.textContent = `${cityName} (${tsMonth}/${tsDay}/${tsYear})`;
+    var imgEl = document.createElement('img');
+    imgEl.setAttribute('src', iconSRC);
+    cityHeadEl.append(imgEl);
+    currentWeatherCard.append(cityHeadEl);
 
     var paraEl = document.createElement('p');
     paraEl.innerHTML = `Temp: ${dat.main.temp}&#8457;<br><br>
@@ -112,7 +117,7 @@ function displayCurrentWeather(dat) {
     currentWeatherCard.append(paraEl);
 }
 
-function getDailyWeather(lat, lon) {
+function getForecastWeather(lat, lon) {
     var dailyWeatherURL = "https://api.openweathermap.org/data/2.5/forecast";
 
     fetch(`${dailyWeatherURL}?lat=${lat}&lon=${lon}&appid=${openWeatherAPI}&units=imperial`)
@@ -120,13 +125,51 @@ function getDailyWeather(lat, lon) {
             return response.json();
         })
         .then(function (data) {
-            displayDailyWeather(data);
+            displayForecastWeather(data);
         });
 }
 
-function displayDailyWeather(dat) {
-    console.log("\nDaily Weather Data");
-    console.log(dat);
+function displayForecastWeather(dat) {
+    forecastCard.textContent = "";
+
+    var forecastHeadEl = document.createElement('h3');
+    forecastHeadEl.textContent = '5-Day Forecast:';
+    forecastCard.append(forecastHeadEl);
+
+    for (var d = 0; d < dat.list.length; d++) {
+        var dailyTimeStamp = new Date(dat.list[d].dt * 1000);
+        if ((d - 1) >= 0) {
+            var priorTimeStamp = new Date(dat.list[(d - 1)].dt * 1000);
+        }
+
+        if (priorTimeStamp) {
+            if (dailyTimeStamp.getDate() != priorTimeStamp.getDate()) {
+                var dailyCard = document.createElement('div');
+                dailyCard.setAttribute('class', 'dailyCard');
+                forecastCard.append(dailyCard);
+
+                var dailyDay = dailyTimeStamp.getDate();
+                var dailyMonth = (dailyTimeStamp.getMonth() + 1);
+                var dailyYear = dailyTimeStamp.getFullYear();
+
+                var dailyHeadEl = document.createElement('h4');
+                dailyHeadEl.textContent = `${dailyMonth}/${dailyDay}/${dailyYear}`;
+                dailyCard.append(dailyHeadEl);
+
+                var iconForecastIMG = dat.list[d].weather[0].icon;
+                var iconForecastSRC = `https://openweathermap.org/img/wn/${iconForecastIMG}.png`;
+                var forecastImgEl = document.createElement('img');
+                forecastImgEl.setAttribute('src', iconForecastSRC);
+                dailyCard.append(forecastImgEl);
+
+                var dailyParaEl = document.createElement('p');
+                dailyParaEl.innerHTML = `Temp: ${dat.list[d].main.temp}&#8457;<br><br>
+                                        Wind: ${dat.list[d].wind.speed} MPH<br><br>
+                                        Humidity: ${dat.list[d].main.humidity}`;
+                dailyCard.append(dailyParaEl);
+            }
+        }
+    }
 }
 
 searchBtn.addEventListener('click', verifyInput);
