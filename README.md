@@ -21,7 +21,7 @@
 > `THEN I am again presented with current and future conditions for that city`
 
 ## Mock-Up Image
-The following animation demonstrates the application functionality:  
+The following image demonstrates the application functionality:  
   
 ![06-server-side-apis-homework-demo](https://github.com/nava003/Module_6_Challenge/assets/32070635/2ca63ac2-2e96-424b-b406-ab34be6102c0)
 
