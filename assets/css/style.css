@@ -1,0 +1,104 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(240, 240, 240);
+}
+
+header {
+    background-image: linear-gradient(to right, cornflowerblue, midnightblue);
+}
+
+h1 {
+    padding: 15px 0;
+    color: aliceblue;
+    text-align: center;
+}
+
+aside {
+    width: 280px;
+    float: left;
+    padding: 8px 5px;
+}
+
+#citySearch h2 {
+    margin-bottom: 8px;
+}
+
+input, button {
+    width: 100%;
+    border-radius: 6px;
+}
+
+input {
+    padding: 8px;
+    border: 2px solid silver;
+}
+
+button {
+    display: block;
+    margin: 12px 0;
+    padding: 6px;
+    border: none;
+    font-weight: bold;
+}
+
+#searchBtn, #clearBtn, #saveBtn {
+    color:azure;
+    background-color: cornflowerblue;
+}
+
+.cityBtns {
+    background-color:silver;
+}
+
+#clearBtn, #saveBtn {
+    display: inline-block;
+    width: 45%;
+}
+
+#clearBtn {
+    margin-right: 27px;
+}
+
+section {
+    margin-left: 290px;
+    width:1000px;
+}
+
+#currentWeatherCard {
+    margin-top: 15px;
+    padding: 0 0 20px 5px;
+    border: 1px solid;
+}
+
+h2 img {
+    vertical-align: middle;
+}
+
+#forecastCard h3 {
+    margin: 20px 0 10px 0;
+}
+
+#forecastRow {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dailyCard {
+    width: 160px;
+    padding: 10px 0 20px 8px;
+    color: azure;
+    background-color:steelblue;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}

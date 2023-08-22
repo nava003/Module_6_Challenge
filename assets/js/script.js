@@ -4,9 +4,15 @@ var searchCard = document.getElementById('searchCard');
 var searchHistoryCard = document.getElementById('searchHistoryCard');
 var currentWeatherCard = document.getElementById('currentWeatherCard');
 var forecastCard = document.getElementById('forecastCard');
+var horizontalRuler = document.querySelector('hr');
+var footer = document.querySelector('footer');
 
 var openWeatherAPI = "5a53411e129f903ae31c1c2a4945c078";
 var citySearchList = [];
+
+currentWeatherCard.setAttribute('style', 'display:none');
+horizontalRuler.style = 'display: none';
+footer.style = 'display: none';
 
 function verifyInput() {
     var strCityName = searchCity.value;
@@ -45,6 +51,7 @@ function getGeoCoords(cityName) {
             if (data.length !== 0) {
                 var dataLat = data[0].lat;
                 var dataLong = data[0].lon;
+                cityName = data[0].name;
                 setHistory(cityName);
                 getCurrentWeather(dataLat, dataLong);
                 getForecastWeather(dataLat, dataLong);
@@ -59,6 +66,8 @@ function getGeoCoords(cityName) {
 function setHistory(city) {
     citySearchList.push(city);
     searchHistoryCard.textContent = "";
+    horizontalRuler.style = 'display:block';
+    footer.style = 'display:block';
 
     for (var n = citySearchList.length - 1; n > -1; n--) {
         var cityBtnEl = document.createElement('button');
@@ -93,6 +102,7 @@ function getCurrentWeather(lat, lon) {
 }
 
 function displayCurrentWeather(dat) {
+    currentWeatherCard.setAttribute('style', 'display:block');
     currentWeatherCard.textContent = "";
     var iconWeatherIMG = dat.weather[0].icon;
     var iconSRC = `https://openweathermap.org/img/wn/${iconWeatherIMG}.png`;
@@ -113,7 +123,7 @@ function displayCurrentWeather(dat) {
     var paraEl = document.createElement('p');
     paraEl.innerHTML = `Temp: ${dat.main.temp}&#8457;<br><br>
                         Wind: ${dat.wind.speed} MPH<br><br>
-                        Humidity: ${dat.main.humidity}`;
+                        Humidity: ${dat.main.humidity} %`;
     currentWeatherCard.append(paraEl);
 }
 
@@ -136,6 +146,10 @@ function displayForecastWeather(dat) {
     forecastHeadEl.textContent = '5-Day Forecast:';
     forecastCard.append(forecastHeadEl);
 
+    var forecastRow = document.createElement('div');
+    forecastRow.setAttribute('id', 'forecastRow');
+    forecastCard.append(forecastRow);
+
     for (var d = 0; d < dat.list.length; d++) {
         var dailyTimeStamp = new Date(dat.list[d].dt * 1000);
         if ((d - 1) >= 0) {
@@ -146,7 +160,7 @@ function displayForecastWeather(dat) {
             if (dailyTimeStamp.getDate() != priorTimeStamp.getDate()) {
                 var dailyCard = document.createElement('div');
                 dailyCard.setAttribute('class', 'dailyCard');
-                forecastCard.append(dailyCard);
+                forecastRow.append(dailyCard);
 
                 var dailyDay = dailyTimeStamp.getDate();
                 var dailyMonth = (dailyTimeStamp.getMonth() + 1);
@@ -165,7 +179,7 @@ function displayForecastWeather(dat) {
                 var dailyParaEl = document.createElement('p');
                 dailyParaEl.innerHTML = `Temp: ${dat.list[d].main.temp}&#8457;<br><br>
                                         Wind: ${dat.list[d].wind.speed} MPH<br><br>
-                                        Humidity: ${dat.list[d].main.humidity}`;
+                                        Humidity: ${dat.list[d].main.humidity} %`;
                 dailyCard.append(dailyParaEl);
             }
         }
