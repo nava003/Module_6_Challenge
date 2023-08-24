@@ -29,7 +29,7 @@ function verifyInput() {
     if (citySearchList.length !== 0) {
         for (var i = 0; i < citySearchList.length; i++) {
             if (strCityName == citySearchList[i]) {
-                alert(`Error: ${strCityName} was already searched.`);
+                alert(`${strCityName} was already searched. Check Search History.`);
                 return;
             }
         }
@@ -64,28 +64,23 @@ function getGeoCoords(cityName) {
 }
 
 function setHistory(city) {
+    for (var n = 0; n < citySearchList.length; n++) {
+        if (city == citySearchList[n]) {
+            return;
+        }
+    }
+
     citySearchList.push(city);
     searchHistoryCard.textContent = "";
     horizontalRuler.style = 'display:block';
     footer.style = 'display:block';
 
-    for (var n = citySearchList.length - 1; n > -1; n--) {
+    for (var d = citySearchList.length - 1; d > -1; d--) {
         var cityBtnEl = document.createElement('button');
-        cityBtnEl.setAttribute('id', `button${n}`);
+        cityBtnEl.setAttribute('id', `button${d}`);
         cityBtnEl.setAttribute('class', 'cityBtns');
-        cityBtnEl.textContent = citySearchList[n];
+        cityBtnEl.textContent = citySearchList[d];
         searchHistoryCard.append(cityBtnEl);
-    }
-
-    if (!document.getElementById('clearBtn') && !document.getElementById('saveBtn')) {
-        var clearBtnEl = document.createElement('button');
-        var saveBtnEl = document.createElement('button');
-        clearBtnEl.setAttribute('id', 'clearBtn');
-        saveBtnEl.setAttribute('id', 'saveBtn');
-        clearBtnEl.textContent = 'Clear History';
-        saveBtnEl.textContent = 'Save History';
-        searchCard.append(clearBtnEl);
-        searchCard.append(saveBtnEl);
     }
 }
 
@@ -150,40 +145,42 @@ function displayForecastWeather(dat) {
     forecastRow.setAttribute('id', 'forecastRow');
     forecastCard.append(forecastRow);
 
-    for (var d = 0; d < dat.list.length; d++) {
-        var dailyTimeStamp = new Date(dat.list[d].dt * 1000);
-        if ((d - 1) >= 0) {
-            var priorTimeStamp = new Date(dat.list[(d - 1)].dt * 1000);
+    for (var e = 0; e < dat.list.length; e++) {
+        var currTimeStamp = new Date(dat.list[e].dt * 1000);
+        if ((e + 1) < dat.list.length) {
+            var nextTimeStamp = new Date(dat.list[(e + 1)].dt * 1000);
         }
 
-        if (priorTimeStamp) {
-            if (dailyTimeStamp.getDate() != priorTimeStamp.getDate()) {
-                var dailyCard = document.createElement('div');
-                dailyCard.setAttribute('class', 'dailyCard');
-                forecastRow.append(dailyCard);
+        if (currTimeStamp.getDate() != nextTimeStamp.getDate()) {
+            var dailyCard = document.createElement('div');
+            dailyCard.setAttribute('class', 'dailyCard');
+            forecastRow.append(dailyCard);
 
-                var dailyDay = dailyTimeStamp.getDate();
-                var dailyMonth = (dailyTimeStamp.getMonth() + 1);
-                var dailyYear = dailyTimeStamp.getFullYear();
+            var dailyDay = nextTimeStamp.getDate();
+            var dailyMonth = (nextTimeStamp.getMonth() + 1);
+            var dailyYear = nextTimeStamp.getFullYear();
 
-                var dailyHeadEl = document.createElement('h4');
-                dailyHeadEl.textContent = `${dailyMonth}/${dailyDay}/${dailyYear}`;
-                dailyCard.append(dailyHeadEl);
+            var dailyHeadEl = document.createElement('h4');
+            dailyHeadEl.textContent = `${dailyMonth}/${dailyDay}/${dailyYear}`;
+            dailyCard.append(dailyHeadEl);
 
-                var iconForecastIMG = dat.list[d].weather[0].icon;
-                var iconForecastSRC = `https://openweathermap.org/img/wn/${iconForecastIMG}.png`;
-                var forecastImgEl = document.createElement('img');
-                forecastImgEl.setAttribute('src', iconForecastSRC);
-                dailyCard.append(forecastImgEl);
+            var iconForecastIMG = dat.list[e].weather[0].icon;
+            var iconForecastSRC = `https://openweathermap.org/img/wn/${iconForecastIMG}.png`;
+            var forecastImgEl = document.createElement('img');
+            forecastImgEl.setAttribute('src', iconForecastSRC);
+            dailyCard.append(forecastImgEl);
 
-                var dailyParaEl = document.createElement('p');
-                dailyParaEl.innerHTML = `Temp: ${dat.list[d].main.temp}&#8457;<br><br>
-                                        Wind: ${dat.list[d].wind.speed} MPH<br><br>
-                                        Humidity: ${dat.list[d].main.humidity} %`;
-                dailyCard.append(dailyParaEl);
-            }
+            var dailyParaEl = document.createElement('p');
+            dailyParaEl.innerHTML = `Temp: ${dat.list[e].main.temp}&#8457;<br><br>
+                                    Wind: ${dat.list[e].wind.speed} MPH<br><br>
+                                    Humidity: ${dat.list[e].main.humidity} %`;
+            dailyCard.append(dailyParaEl);
         }
     }
 }
 
 searchBtn.addEventListener('click', verifyInput);
+searchHistoryCard.addEventListener('click', function(e) {
+    var ctyName = e.target.textContent;
+    getGeoCoords(ctyName);
+});

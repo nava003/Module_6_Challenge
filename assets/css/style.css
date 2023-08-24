@@ -29,7 +29,8 @@ aside {
     margin-bottom: 8px;
 }
 
-input, button {
+input,
+button {
     width: 100%;
     border-radius: 6px;
 }
@@ -47,27 +48,32 @@ button {
     font-weight: bold;
 }
 
-#searchBtn, #clearBtn, #saveBtn {
-    color:azure;
+#searchBtn {
+    color: azure;
     background-color: cornflowerblue;
 }
 
+#searchBtn:hover {
+    padding: 2px;
+    border: 4px solid cornflowerblue;
+    background-color: rgb(90, 135, 210);
+    cursor: pointer;
+}
+
 .cityBtns {
-    background-color:silver;
+    background-color: silver;
 }
 
-#clearBtn, #saveBtn {
-    display: inline-block;
-    width: 45%;
-}
-
-#clearBtn {
-    margin-right: 27px;
+.cityBtns:hover {
+    padding: 2px;
+    border: 4px solid silver;
+    background-color: rgb(176, 176, 176);
+    cursor: pointer;
 }
 
 section {
     margin-left: 290px;
-    width:1000px;
+    width: 1000px;
 }
 
 #currentWeatherCard {
@@ -93,7 +99,7 @@ h2 img {
     width: 160px;
     padding: 10px 0 20px 8px;
     color: azure;
-    background-color:steelblue;
+    background-color: steelblue;
 }
 
 footer {
