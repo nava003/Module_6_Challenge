@@ -1,4 +1,4 @@
-# Module_6_Challenge
+# Challenge - Weather Dashboard
 
 ## User Story
 > `AS A traveler`  
