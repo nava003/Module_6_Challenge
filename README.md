@@ -1,4 +1,4 @@
-# Challenge - Weather Dashboard
+# Weather Dashboard
 
 ## User Story
 > `AS A traveler`  
